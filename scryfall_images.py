@@ -1,7 +1,6 @@
-import datetime
-import time
 from json import loads
 from shutil import copyfileobj
+from time import sleep
 
 from requests import get
 
@@ -37,7 +36,12 @@ def get_image(search_query):
 
 
 def mult_images(file):
+    counter = 0
     for i in file:
+        counter += 1
+        if counter == 10:
+            sleep(1)
+            counter = 0
         temp = i.replace(" ", "").lower()
         name = i.title()
         try:
@@ -50,10 +54,6 @@ def mult_images(file):
             with open(f"{name}.png", "wb") as out_file:
                 copyfileobj(get(img_url, stream=True).raw, out_file)
             # rate limit to 10 per second
-            last_loop_start = datetime.now()
-            _delta = datetime.now() - (last_loop_start + 0.100)
-            if _delta.seconds > 0:
-                time.sleep(0.100 - _delta.seconds)
         # prints out reason for failure, usually due to missing data from incorrect card name
         except Exception as e:
             print(f"Error Finding Card: {e}")
