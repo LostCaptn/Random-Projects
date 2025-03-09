@@ -31,10 +31,6 @@ def get_image(search_query):
         # saves the image, writes to the file in binary mode (better for images)
         with open("image.png", "wb") as out_file:
             copyfileobj(get(img_url, stream=True).raw, out_file)
-        last_loop_start = datetime.now()
-        _delta = datetime.now() - (last_loop_start + 0.100)
-        if _delta.seconds > 0:
-            time.sleep(0.100 - _delta.seconds)
     # prints out reason for failure, usually due to missing data from incorrect card name
     except Exception as e:
         print(f"Error Finding Card: {e}")
@@ -53,6 +49,11 @@ def mult_images(file):
             # saves the image, writes to the file in binary mode (better for images)
             with open(f"{name}.png", "wb") as out_file:
                 copyfileobj(get(img_url, stream=True).raw, out_file)
+            # rate limit to 10 per second
+            last_loop_start = datetime.now()
+            _delta = datetime.now() - (last_loop_start + 0.100)
+            if _delta.seconds > 0:
+                time.sleep(0.100 - _delta.seconds)
         # prints out reason for failure, usually due to missing data from incorrect card name
         except Exception as e:
             print(f"Error Finding Card: {e}")
